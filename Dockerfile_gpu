@@ -3,7 +3,7 @@
 # OS Support also exists for jessie & stretch (slim and full).
 # See https://hub.docker.com/r/library/python/ for all supported Python
 # tags from Docker Hub.
-FROM floydhub/pytorch:1.0.0-py3.40
+FROM floydhub/tensorflow:1.8.0-gpu.cuda9cudnn7-py3_aws.40
 MAINTAINER zergmk2
 LABEL Name=chineseocr Version=0.0.2
 EXPOSE 8080
@@ -11,8 +11,8 @@ EXPOSE 8080
 WORKDIR /app
 ADD . /app
 RUN git submodule init && git submodule update
-RUN cd darknet/ && make && cd ..
+RUN cd darknet/ && make -f Makefile_GPU && cd ..
 VOLUME /app/models
-RUN pip install -r requirements_cpu.txt --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple/
-RUN cd text/detector/utils && sh make-for-cpu.sh && cd ..
+RUN pip install -r requirements_gpu.txt --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple/
+RUN cd text/detector/utils && sh make.sh && cd ..
 CMD ["ipython", "app.py", "8080"]
